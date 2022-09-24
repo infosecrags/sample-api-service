@@ -62,9 +62,7 @@ pipeline {
               }
             }
           }
-      }
-    }
-              stage('OSS License Checker') {
+                      stage('OSS License Checker') {
              steps {
                container('licensefinder') {
                  catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -78,6 +76,9 @@ pipeline {
                }
              }
            }
+      }
+    }
+
     stage('Package') {
       steps {
         container('docker-tools') {
