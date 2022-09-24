@@ -55,7 +55,16 @@ pipeline {
                   sh './mvnw org.owasp:dependency-check-maven:check'}
                 }
             }
-          stage('OSS License Checker') {
+            post {
+              always {
+                archiveArtifacts allowEmptyArchive: true, artifacts: 'target/dependency-check-report.html', fingerprint: true, onlyIfSuccessful: false
+                dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+              }
+            }
+          }
+      }
+    }
+              stage('OSS License Checker') {
              steps {
                container('licensefinder') {
                  catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -69,15 +78,6 @@ pipeline {
                }
              }
            }
-            post {
-              always {
-                archiveArtifacts allowEmptyArchive: true, artifacts: 'target/dependency-check-report.html', fingerprint: true, onlyIfSuccessful: false
-                dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-              }
-            }
-          }
-      }
-    }
     stage('Package') {
       steps {
         container('docker-tools') {
